@@ -235,7 +235,8 @@ function Home() {
   const tab: HomeTab = aba ?? "ALL";
   const setTab = (next: HomeTab) => {
     if (next === tab) return;
-    void navigate({ search: { aba: next }, replace: true });
+    // PROTÓTIPO: preserva o ?variant= ao trocar de aba.
+    void navigate({ search: (prev) => ({ ...prev, aba: next }), replace: true });
   };
   const [menuTipoFeed, setMenuTipoFeed] = useState(false);
   const [menuTopic, setMenuTopic] = useState(false);
