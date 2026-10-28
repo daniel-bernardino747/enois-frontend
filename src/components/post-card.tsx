@@ -39,6 +39,7 @@ import { useLiteMode } from "@/lib/use-lite-mode";
 import { cn } from "@/lib/utils";
 
 import { MentionTextarea } from "@/components/mention-textarea";
+import { PrototypePostHeader } from "@/components/prototype/prototype-post-header";
 
 import { AuthorInfo } from "./post/author-info";
 import { formatTime } from "./post/format-time";
@@ -68,6 +69,7 @@ function PostCardView({
   pinned = false,
   onTogglePin,
   pinPending = false,
+  prototypeHeader,
 }: PostCardProps) {
   const { requireAuth, user } = useAuth();
   // Modo lite: nada de player de terceiro montando sozinho no feed.
@@ -241,6 +243,35 @@ function PostCardView({
   // Os comentarios sao carregados pelo proprio PostComments quando a secao abre.
   const toggleComments = () => setShowComments((value) => !value);
 
+  const sealsRow = seals && seals.seals.length > 0 && (
+    <div className="mt-3 flex flex-wrap items-center gap-1.5">
+      {seals.seals.map((item) => {
+        const seal = postSeal(item.seal);
+        if (!seal) return null;
+        return (
+          <button
+            key={item.seal}
+            type="button"
+            onClick={() => setShowSeals(post.id, true)}
+            title={`${seal.label} · ${texts.posts.seals.seeWho}`}
+            aria-label={`${seal.label} · ${texts.posts.seals.seeWho}`}
+            className={cn(
+              "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium transition hover:border-primary/50",
+              seal.className,
+              mySeals.includes(item.seal) && "ring-1 ring-primary/60",
+            )}
+          >
+            <seal.icon className="h-3 w-3" aria-hidden />
+
+            <>{seal.label}</>
+
+            <span className="tabular-nums opacity-70">{item.count}</span>
+          </button>
+        );
+      })}
+    </div>
+  );
+
   return (
     <article
       id={feedTab ? `feed-post-${post.id}` : undefined}
@@ -274,117 +305,100 @@ function PostCardView({
         </Link>
       )}
 
-      <header className="flex justify-between items-start gap-3">
-        <AuthorInfo
-          authorUsername={post.authorUsername}
-          authorName={post.authorName}
-          authorBadge={post.authorBadge}
-          authorBadges={post.authorBadges}
-          authorStyle={post.authorStyle}
-          authorContributor={post.authorContributor}
-          authorIdentity={post.authorIdentity}
-          authorAvatar={post.authorAvatar}
-          authorAvatarFrame={post.authorAvatarFrame}
-          createdAt={post.createdAt}
-          community={post.community}
-          fallbackClassName={meta.classAvatar}
-          onFollowCommunity={handleFollowCommunity}
-          followPending={followCommunity.isPending}
+      {prototypeHeader ? (
+        <PrototypePostHeader
+          variant={prototypeHeader}
+          post={post}
+          typeLabel={meta.label}
+          typeClassName={meta.className}
+          seals={seals}
         />
+      ) : (
+        <header className="flex justify-between items-start gap-3">
+          <AuthorInfo
+            authorUsername={post.authorUsername}
+            authorName={post.authorName}
+            authorBadge={post.authorBadge}
+            authorBadges={post.authorBadges}
+            authorStyle={post.authorStyle}
+            authorContributor={post.authorContributor}
+            authorIdentity={post.authorIdentity}
+            authorAvatar={post.authorAvatar}
+            authorAvatarFrame={post.authorAvatarFrame}
+            createdAt={post.createdAt}
+            community={post.community}
+            fallbackClassName={meta.classAvatar}
+            onFollowCommunity={handleFollowCommunity}
+            followPending={followCommunity.isPending}
+          />
 
-        <div className="flex items-center gap-1.5">
-          {pinned && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-primary-soft px-2.5 py-1 text-xs font-medium text-primary">
-              <Pin className="h-3 w-3" aria-hidden />
+          <div className="flex items-center gap-1.5">
+            {pinned && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-primary-soft px-2.5 py-1 text-xs font-medium text-primary">
+                <Pin className="h-3 w-3" aria-hidden />
 
-              <>{texts.posts.pin.pinned}</>
-            </span>
-          )}
+                <>{texts.posts.pin.pinned}</>
+              </span>
+            )}
 
-          {onTogglePin && (
-            <button
-              type="button"
-              onClick={onTogglePin}
-              disabled={pinPending}
-              title={pinned ? texts.posts.pin.unpin : texts.posts.pin.pin}
-              aria-label={pinned ? texts.posts.pin.unpin : texts.posts.pin.pin}
-              className="rounded-lg p-1.5 text-muted-foreground transition hover:bg-muted hover:text-primary disabled:opacity-50"
-            >
-              {pinned ? <PinOff className="h-4 w-4" /> : <Pin className="h-4 w-4" />}
-            </button>
-          )}
+            {onTogglePin && (
+              <button
+                type="button"
+                onClick={onTogglePin}
+                disabled={pinPending}
+                title={pinned ? texts.posts.pin.unpin : texts.posts.pin.pin}
+                aria-label={pinned ? texts.posts.pin.unpin : texts.posts.pin.pin}
+                className="rounded-lg p-1.5 text-muted-foreground transition hover:bg-muted hover:text-primary disabled:opacity-50"
+              >
+                {pinned ? <PinOff className="h-4 w-4" /> : <Pin className="h-4 w-4" />}
+              </button>
+            )}
 
-          <span
-            className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${meta.className}`}
-          >
-            {meta.label}
-          </span>
-
-          {/* O assunto (categoria) do post fica ao lado do tipo, quando o autor classificou. */}
-          {post.topic && (
             <span
-              className="inline-flex items-center rounded-full border border-border-soft px-2.5 py-1 text-xs font-medium text-text-subtle"
-              title={texts.feed.composer.topic}
+              className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${meta.className}`}
             >
-              {TOPIC_LABELS[post.topic as keyof typeof TOPIC_LABELS] ?? post.topic}
+              {meta.label}
             </span>
-          )}
 
-          {post.type === "MOMENT" && post.expiresAt && (
-            <span
-              className="inline-flex items-center gap-1 rounded-full border border-amber-500/40 px-2 py-1 text-xs font-normal text-amber-600 dark:text-amber-400"
-              title={texts.posts.momentExpiryTitle}
-            >
-              <Clock className="h-3 w-3" />
-              {texts.posts.momentExpiry(remainingHours(post.expiresAt))}
-            </span>
-          )}
+            {/* O assunto (categoria) do post fica ao lado do tipo, quando o autor classificou. */}
+            {post.topic && (
+              <span
+                className="inline-flex items-center rounded-full border border-border-soft px-2.5 py-1 text-xs font-medium text-text-subtle"
+                title={texts.feed.composer.topic}
+              >
+                {TOPIC_LABELS[post.topic as keyof typeof TOPIC_LABELS] ?? post.topic}
+              </span>
+            )}
 
-          {isOwner && (
-            <PostOwnerMenu
-              onEdit={() => {
-                setDraft(post.content);
-                setPageDraft(pageHtml);
-                setEditType(post.type);
-                setEditOpen(true);
-              }}
-              onDelete={() => setDeleteOpen(true)}
-            />
-          )}
-        </div>
-      </header>
+            {post.type === "MOMENT" && post.expiresAt && (
+              <span
+                className="inline-flex items-center gap-1 rounded-full border border-amber-500/40 px-2 py-1 text-xs font-normal text-amber-600 dark:text-amber-400"
+                title={texts.posts.momentExpiryTitle}
+              >
+                <Clock className="h-3 w-3" />
+                {texts.posts.momentExpiry(remainingHours(post.expiresAt))}
+              </span>
+            )}
+
+            {isOwner && (
+              <PostOwnerMenu
+                onEdit={() => {
+                  setDraft(post.content);
+                  setPageDraft(pageHtml);
+                  setEditType(post.type);
+                  setEditOpen(true);
+                }}
+                onDelete={() => setDeleteOpen(true)}
+              />
+            )}
+          </div>
+        </header>
+      )}
 
       {/* Selos da comunidade: ficam no topo, acima do conteudo — e os que a pessoa marcou ficam em
           destaque (anel). Cada selo é um botão: abre a lista de quem marcou, como a contagem de
           reações abre a de quem reagiu. A contagem aparece sempre (é a resposta de "quantos"). */}
-      {seals && seals.seals.length > 0 && (
-        <div className="mt-3 flex flex-wrap items-center gap-1.5">
-          {seals.seals.map((item) => {
-            const seal = postSeal(item.seal);
-            if (!seal) return null;
-            return (
-              <button
-                key={item.seal}
-                type="button"
-                onClick={() => setShowSeals(post.id, true)}
-                title={`${seal.label} · ${texts.posts.seals.seeWho}`}
-                aria-label={`${seal.label} · ${texts.posts.seals.seeWho}`}
-                className={cn(
-                  "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium transition hover:border-primary/50",
-                  seal.className,
-                  mySeals.includes(item.seal) && "ring-1 ring-primary/60",
-                )}
-              >
-                <seal.icon className="h-3 w-3" aria-hidden />
-
-                <>{seal.label}</>
-
-                <span className="tabular-nums opacity-70">{item.count}</span>
-              </button>
-            );
-          })}
-        </div>
-      )}
+      {!prototypeHeader && sealsRow}
 
       {/* Post de pagina pode nao ter texto nenhum: sem paragrafo, so a pagina logo abaixo.
           Na lista, texto acima de 400 caracteres entra cortado em 8 linhas com o "Ler mais" que
@@ -530,6 +544,9 @@ function PostCardView({
           ))}
         </div>
       )}
+
+      {/* PROTÓTIPO: nas variações A e C os selos descem para perto das ações. */}
+      {(prototypeHeader === "A" || prototypeHeader === "C") && sealsRow}
 
       <PostNotes post={post} />
 

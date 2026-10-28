@@ -1,4 +1,5 @@
 import type { PostView } from "@/types/application/feed/post-view";
+import type { FeedMobileVariant } from "@/types/components/prototype/feed-mobile-variant";
 import type { HomeTab } from "@/types/routes/feed/home-tab";
 
 export type PostCardProps = {
@@ -19,4 +20,7 @@ export type PostCardProps = {
   onTogglePin?: () => void;
 
   pinPending?: boolean;
+
+  /** PROTÓTIPO (spike/feed-mobile-ux): troca o cabeçalho pela variação. */
+  prototypeHeader?: FeedMobileVariant;
 };

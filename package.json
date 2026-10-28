@@ -21,7 +21,8 @@
     "prepare": "simple-git-hooks",
     "generate:api": "tsx scripts/fetch-openapi-spec.ts --fetch && tsx scripts/generate-api.ts",
     "check:api-matrix": "tsx scripts/check-api-matrix.ts",
-    "generate:api:watch": "orval --config orval.config.ts --watch"
+    "generate:api:watch": "orval --config orval.config.ts --watch",
+    "prototype:feed": "node scripts/prototype/feed-mobile.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
