@@ -41,6 +41,7 @@ import { Route as ParDeEstudoRouteImport } from './routes/par-de-estudo'
 import { Route as PenalidadesRouteImport } from './routes/penalidades'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as ProfissionalRouteImport } from './routes/profissional'
+import { Route as PrototypeParDeEstudoRouteImport } from './routes/prototype-par-de-estudo'
 import { Route as RedeRouteImport } from './routes/rede'
 import { Route as ResponsavelRouteImport } from './routes/responsavel'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
@@ -242,6 +243,11 @@ const PrivacidadeRoute = PrivacidadeRouteImport.update({
 const ProfissionalRoute = ProfissionalRouteImport.update({
   id: '/profissional',
   path: '/profissional',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrototypeParDeEstudoRoute = PrototypeParDeEstudoRouteImport.update({
+  id: '/prototype-par-de-estudo',
+  path: '/prototype-par-de-estudo',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RedeRoute = RedeRouteImport.update({
@@ -491,6 +497,7 @@ export interface FileRoutesByFullPath {
   '/penalidades': typeof PenalidadesRoute
   '/privacidade': typeof PrivacidadeRoute
   '/profissional': typeof ProfissionalRoute
+  '/prototype-par-de-estudo': typeof PrototypeParDeEstudoRoute
   '/rede': typeof RedeRoute
   '/responsavel': typeof ResponsavelRoute
   '/robots.txt': typeof RobotsDottxtRoute
@@ -567,6 +574,7 @@ export interface FileRoutesByTo {
   '/penalidades': typeof PenalidadesRoute
   '/privacidade': typeof PrivacidadeRoute
   '/profissional': typeof ProfissionalRoute
+  '/prototype-par-de-estudo': typeof PrototypeParDeEstudoRoute
   '/rede': typeof RedeRoute
   '/responsavel': typeof ResponsavelRoute
   '/robots.txt': typeof RobotsDottxtRoute
@@ -644,6 +652,7 @@ export interface FileRoutesById {
   '/penalidades': typeof PenalidadesRoute
   '/privacidade': typeof PrivacidadeRoute
   '/profissional': typeof ProfissionalRoute
+  '/prototype-par-de-estudo': typeof PrototypeParDeEstudoRoute
   '/rede': typeof RedeRoute
   '/responsavel': typeof ResponsavelRoute
   '/robots.txt': typeof RobotsDottxtRoute
@@ -722,6 +731,7 @@ export interface FileRouteTypes {
     | '/penalidades'
     | '/privacidade'
     | '/profissional'
+    | '/prototype-par-de-estudo'
     | '/rede'
     | '/responsavel'
     | '/robots.txt'
@@ -798,6 +808,7 @@ export interface FileRouteTypes {
     | '/penalidades'
     | '/privacidade'
     | '/profissional'
+    | '/prototype-par-de-estudo'
     | '/rede'
     | '/responsavel'
     | '/robots.txt'
@@ -874,6 +885,7 @@ export interface FileRouteTypes {
     | '/penalidades'
     | '/privacidade'
     | '/profissional'
+    | '/prototype-par-de-estudo'
     | '/rede'
     | '/responsavel'
     | '/robots.txt'
@@ -951,6 +963,7 @@ export interface RootRouteChildren {
   PenalidadesRoute: typeof PenalidadesRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
   ProfissionalRoute: typeof ProfissionalRoute
+  PrototypeParDeEstudoRoute: typeof PrototypeParDeEstudoRoute
   RedeRoute: typeof RedeRoute
   ResponsavelRoute: typeof ResponsavelRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
@@ -1208,6 +1221,13 @@ declare module '@tanstack/react-router' {
       path: '/profissional'
       fullPath: '/profissional'
       preLoaderRoute: typeof ProfissionalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/prototype-par-de-estudo': {
+      id: '/prototype-par-de-estudo'
+      path: '/prototype-par-de-estudo'
+      fullPath: '/prototype-par-de-estudo'
+      preLoaderRoute: typeof PrototypeParDeEstudoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/rede': {
@@ -1649,6 +1669,7 @@ const rootRouteChildren: RootRouteChildren = {
   PenalidadesRoute: PenalidadesRoute,
   PrivacidadeRoute: PrivacidadeRoute,
   ProfissionalRoute: ProfissionalRoute,
+  PrototypeParDeEstudoRoute: PrototypeParDeEstudoRoute,
   RedeRoute: RedeRoute,
   ResponsavelRoute: ResponsavelRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
